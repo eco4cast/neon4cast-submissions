@@ -161,6 +161,17 @@ forecast_output_validator <- function(file_in,
       usethis::ui_warn("ensemble is not the third dimension")
       valid <- FALSE
     }
+  }else if(grepl("[.]xml", file_in)){ #if file is eml
+    
+    out <- EML::read_eml(file_in)
+    if(!EFIstandards::forecast_validator(out)){
+      usethis::ui_warn("metadata is not correct")
+      valid <- FALSE
+    }else{
+      usethis::ui_done("metadata is correct")
+    }
+  }else{
+    valid <- FALSE
   }
   
   return(valid)
