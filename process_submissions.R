@@ -1,4 +1,4 @@
-#remotes::install_deps()
+remotes::install_deps()
 
 Sys.setenv("AWS_DEFAULT_REGION" = "data",
            "AWS_S3_ENDPOINT" = "ecoforecast.org")

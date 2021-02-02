@@ -1,0 +1,4 @@
+Package: submissions
+Version: 0.1.0
+Imports: tidyverse, lubridate, ecoforecastR,contentid, aws.s3, prov, EML, yaml, EFIstandards, ncdf4, tools, usethis 
+Remotes: eco4cast/EFIstandards
