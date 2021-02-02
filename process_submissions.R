@@ -28,26 +28,29 @@ if(length(object) > 0){
       
       if(valid){
         aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0(theme,"/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "forecasts")
-        aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions")
+        success_tranfer <- tryCatch(aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions"), error = function(e) NA_real_,finally = NULL)
         aws.s3::delete_object(object = object[[i]]$Key, bucket = "submissions")
-        unlink(log_file)
       }else{
         aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("forecasts/not_in_standard/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "forecasts")
-        aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions")
+        success_tranfer <- tryCatch(aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions"), error = function(e) NA_real_,finally = NULL)
         aws.s3::delete_object(object = object[[i]]$Key, bucket = "submissions")
         aws.s3::put_object(file = log_file, bucket = "forecasts/not_in_standard")
-        unlink(log_file)
       }
     }else{
       aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("forecasts/not_in_standard/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "forecasts")
-      aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions")
+      success_tranfer <- tryCatch(aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions"), error = function(e) NA_real_,finally = NULL)
       capture.output({
       message(object[[i]]$Key)
       message("incorrect theme name in filename")
       message("Options are: ", paste(themes, collapse = " "))
       }, file = log_file, type = c("message"))
       aws.s3::put_object(file = log_file, bucket = "forecasts/not_in_standard")
-      unlink(log_file)
+      
     }
+    
+    if(!is.na(success_tranfer)){
+      aws.s3::delete_object(object = object[[i]]$Key, bucket = "submissions")
+    }
+    unlink(log_file)
   }
 }
