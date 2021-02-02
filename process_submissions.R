@@ -18,8 +18,6 @@ if(length(object) > 0){
     print(object[[i]]$Key)
     print(theme)
     
-  
-    
     if(theme %in% themes & tools::file_ext(object[[i]]$Key) != "log"){
       
       log_file <- paste0(submissions_directory,"/",object[[i]]$Key,".log")

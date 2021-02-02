@@ -112,22 +112,22 @@ forecast_output_validator <- function(file_in,
       valid <- FALSE
     }
     
-     usethis::ui_todo("Checking that file contains data assimilation column...")
-    if(lexists(out, "data_assimilation")){
-      usethis::ui_done("file has data_assimilation column")
-    }else{
-      usethis::ui_warn("file missing data_assimilation column")
-      valid <- FALSE
-    }
+    #usethis::ui_todo("Checking that file contains data assimilation column...")
+    #if(lexists(out, "data_assimilation")){
+    #  usethis::ui_done("file has data_assimilation column")
+    #}else{
+    #  usethis::ui_warn("file missing data_assimilation column")
+    #  valid <- FALSE
+    #}
     
-     usethis::ui_todo("Checking that file contains forecast column...")
+    # usethis::ui_todo("Checking that file contains forecast column...")
      
-    if(lexists(out, "forecast")){
-      usethis::ui_done("file has forecast column")
-    }else{
-      usethis::ui_warn("file missing forecast column")
-      valid <- FALSE
-    }
+    #if(lexists(out, "forecast")){
+    #  usethis::ui_done("file has forecast column")
+    #}else{
+    #  usethis::ui_warn("file missing forecast column")
+    #  valid <- FALSE
+    #}
   
     
   } else if(grepl("[.]nc", file_in)){ #if file is nc
