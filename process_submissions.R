@@ -21,12 +21,15 @@ if(length(object) > 0){
 
     if(theme %in% themes){
       
-      valid <- forecast_output_validator(file.path(submissions_directory,object[[i]]$Key))
+      valid <- tryCatch(forecast_output_validator(file.path(submissions_directory,object[[i]]$Key)),error = function(e) FALSE, finally = NULL)
+                        
+
+      print(valid)
       
       if(valid){
-      aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0(theme,"/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "forecasts")
-      aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions")
-      aws.s3::delete_object(object = object[[i]]$Key, bucket = "submissions")
+       aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0(theme,"/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "forecasts")
+       aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions")
+       aws.s3::delete_object(object = object[[i]]$Key, bucket = "submissions")
       }else{
         aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0(theme,"/not_in_standard/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "forecasts")
         aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions")
