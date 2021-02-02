@@ -26,6 +26,8 @@ forecast_output_validator <- function(file_in,
   
   valid <- TRUE
   
+  message(file_in)
+  
   usethis::ui_todo("Checking validity of file name...")
   
   file_in <- file.path(submissions_directory,object[[i]]$Key)
@@ -223,7 +225,7 @@ forecast_output_validator <- function(file_in,
     out <- EML::read_eml(file_in)
     
     valid_metadata <- tryCatch(EFIstandards::forecast_validator(out),error = function(e){
-      print(e)
+      message(e)
       return(FALSE)
       }, 
       finally = NULL)
