@@ -218,6 +218,8 @@ forecast_output_validator <- function(file_in,
       usethis::ui_done("dimensions are correct order")
     }
     
+    ncdf4::nc_close(nc)
+    
   }else if(grepl("[.]xml", file_in)){ #if file is eml
     
     usethis::ui_todo("Checking validity of metdata...")
