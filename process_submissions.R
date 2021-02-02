@@ -3,6 +3,10 @@ remotes::install_deps()
 Sys.setenv("AWS_DEFAULT_REGION" = "data",
            "AWS_S3_ENDPOINT" = "ecoforecast.org")
 
+submissions_directory <- "/efi_neon_challenge/submissions"
+
+source("forecast_output_validator.R")
+
 
 object <- aws.s3::get_bucket("submissions")
 
@@ -13,8 +17,22 @@ if(length(object) > 0){
     theme <- stringr::str_split(theme, "_")[[1]][1]
     print(object[[i]]$Key)
     print(theme)
+    
+
     if(theme %in% themes){
+      
+      valid <- forecast_output_validator(file.path(submissions_directory,object[[i]]$Key))
+      
+      if(valid){
       aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0(theme,"/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "forecasts")
+      aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions")
+      aws.s3::delete_object(object = object[[i]]$Key, bucket = "submissions")
+      }else{
+        aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0(theme,"/not_in_standard/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "forecasts")
+        aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions")
+        aws.s3::delete_object(object = object[[i]]$Key, bucket = "submissions")      
+        
+      }
     }
   }
 }
