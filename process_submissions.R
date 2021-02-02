@@ -23,9 +23,6 @@ if(length(object) > 0){
       
       valid <- tryCatch(forecast_output_validator(file.path(submissions_directory,object[[i]]$Key)),error = function(e) FALSE, finally = NULL)
                         
-
-      print(valid)
-      
       if(valid){
        aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0(theme,"/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "forecasts")
        aws.s3::copy_object(from_object = object[[i]]$Key, to_object = paste0("processed/",object[[i]]$Key), from_bucket = "submissions", to_bucket = "submissions")
