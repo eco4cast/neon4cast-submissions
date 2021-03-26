@@ -17,7 +17,9 @@ forecast_output_validator <- function(file_in,
                                                     "nee",
                                                     "le", 
                                                     "vswc",
-                                                    "gcc_90"),
+                                                    "gcc_90",
+                                                    "ixodes_scapularis", 
+                                                    "ambloyomma_americanum"),
                                theme_names = c("aquatics", "beetles", "phenology", "terrestrial_30min","terrestrial_daily","ticks")){
   
   lexists <- function(list,name){
@@ -30,7 +32,7 @@ forecast_output_validator <- function(file_in,
   
   usethis::ui_todo("Checking validity of file name...")
   
-  file_in <- file.path(submissions_directory,object[[i]]$Key)
+  #file_in <- file.path(submissions_directory,object[[i]]$Key)
   file_basename <- basename(file_in)
   parsed_basename <- unlist(stringr::str_split(file_basename, "-"))
   file_name_parsable <- TRUE
@@ -58,6 +60,7 @@ forecast_output_validator <- function(file_in,
     
     # if file is csv zip file
      out <- readr::read_csv(file_in, guess_max = 1e6)
+
      
      usethis::ui_todo("Checking that file contains correct variables...")
 
@@ -98,14 +101,20 @@ forecast_output_validator <- function(file_in,
       usethis::ui_warn("file missing siteID column")
     }
     
-     usethis::ui_todo("Checking that file contains parsable time column...")
+    usethis::ui_todo("Checking that file contains parsable time column...")
     if(lexists(out, "time")){
       usethis::ui_done("file has time column")
+      out2  <- read.csv(file_in)
+      if(!stringr::str_detect(out2$time[1], "-")){
+        usethis::ui_done("time column format is not in the correct YYYY-MM-DD format")
+        valid <- FALSE
+      }else{
       if(sum(class(out$time) %in% c("Date","POSIXct")) > 0){
         usethis::ui_done("file has correct time column")
       }else{
-        usethis::ui_warn("time column is incorrect format")
+        usethis::ui_done("time column format is not in the correct YYYY-MM-DD format")
         valid <- FALSE
+      }
       }
     }else{
       usethis::ui_warn("file missing time column")
