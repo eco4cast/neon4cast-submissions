@@ -11,14 +11,13 @@ message("Downloading forecasts ...")
 
 
 
-sink(tempfile()) # aws.s3 is crazy chatty and ignores suppressMessages()...
+#sink(tempfile()) # aws.s3 is crazy chatty and ignores suppressMessages()...
 aws.s3::s3sync("submissions", bucket= "submissions",  direction= "download", verbose= FALSE)
-
-sink()
+#sink()
 
 submissions <- fs::dir_ls("submissions", recurse = TRUE, type = "file")
 
-themes <- c("aquatics", "beetles", "phenology", "terrestrial_30min", "terrestrial_daily","ticks")
+themes <- c("aquatics", "beetles", "phenology", "terrestrial_30min", "terrestrial_daily", "ticks")
 if(length(submissions) > 0){
   for(i in 1:length(submissions)){
     if(length(unlist(stringr::str_split(submissions[i], "/"))) == 3){
@@ -91,8 +90,13 @@ if(length(submissions) > 0){
                                            basename(log_file)), 
                            bucket = "forecasts")
       }else{
-        #Don't do anything
+        #Don't do anything because the date hasn't occur yet
       }
+    }else{
+      aws.s3::copy_object(from_object = curr_submission, 
+                          to_object = paste0("not_in_standard/",curr_submission), 
+                          from_bucket = "submissions",
+                          to_bucket = "forecasts")
     }
   }
 }
